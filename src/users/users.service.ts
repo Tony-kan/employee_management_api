@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { updatedUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -47,11 +49,7 @@ export class UsersService {
     return this.users.find((user) => user.id === id);
   }
 
-  createUser(user: {
-    name: string;
-    email: string;
-    role: 'INTERN' | 'ENGINEER' | 'ADMIN';
-  }) {
+  createUser(user: CreateUserDto) {
     const newUser = {
       id: randomUUID(),
       ...user,
@@ -60,14 +58,7 @@ export class UsersService {
     return newUser;
   }
 
-  updateUser(
-    id: string,
-    updatedUser: {
-      name?: string;
-      email?: string;
-      role?: 'INTERN' | 'ENGINEER' | 'ADMIN';
-    },
-  ) {
+  updateUser(id: string, updatedUser: updatedUserDto) {
     this.users = this.users.map((user) => {
       if (user.id === id) {
         return { ...user, ...updatedUser };
