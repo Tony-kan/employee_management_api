@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { updatedUserDto } from './dto/update-user.dto';
@@ -40,19 +44,44 @@ export class UsersService {
 
   findAllUsers(role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
     if (role) {
-      return this.users.filter((user) => user.role === role);
+      const roleArray = this.users.filter((user) => user.role === role);
+      if (roleArray.length === 0)
+        throw new NotFoundException(`User with role ${role} not found`);
+      return roleArray;
     }
     return this.users;
   }
 
   findOneUser(id: string) {
-    return this.users.find((user) => user.id === id);
+    const user = this.users.find((user) => user.id === id);
+
+    if (!user) throw new NotFoundException(`User with id ${id} not found`);
+
+    return user;
   }
 
-  createUser(user: CreateUserDto) {
+  findOneUserByEmail(email: string) {
+    const user = this.users.find((user) => user.email === email);
+
+    if (!user)
+      throw new NotFoundException(`User with email ${email} not found`);
+
+    return user;
+  }
+
+  createUser(userData: CreateUserDto) {
+    const existingUser = this.users.find(
+      (user) => user.email === userData.email,
+    );
+
+    if (existingUser)
+      throw new ConflictException(
+        `User with email ${userData.email} already exists`,
+      );
+
     const newUser = {
       id: randomUUID(),
-      ...user,
+      ...userData,
     };
     this.users.push(newUser);
     return newUser;
