@@ -24,17 +24,89 @@ generator client {
 //   // directUrl = env("DATABASE_URL_UNPOOLED")
 // }
 
+// model Employee {
+//   id        String   @id @default(uuid())
+//   name      String
+//   email     String   @unique
+//   role      Role
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
+
 enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
   INTERN
   ENGINEER
-  ADMIN
 }
 
+enum Status {
+  PENDING
+  REJECTED
+  ACCEPTED
+}
+
+
 model Employee {
-  id        String   @id @default(uuid())
-  name      String   
-  email     String   @unique
-  role      Role
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String        @id @default(uuid())
+  user_id       String?
+  department_id String?
+  user          User?         @relation(fields: [user_id], references: [id])
+  department    Department?   @relation(fields: [department_id], references: [id])
+  job_title     String?
+  hire_date     DateTime?
+  salary        Salary[]
+  applications  Application[]
+}
+
+model User {
+  id         String     @id @default(uuid())
+  email      String     @unique
+  password   String
+  name       String
+  role       Role
+  Employee   Employee[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+}
+
+model Department {
+  id          String     @id @default(uuid())
+  name        String
+  description String
+  employees   Employee[]
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+}
+
+model Salary {
+  id          String   @id @default(uuid())
+  employee_id String
+  employee    Employee @relation(fields: [employee_id], references: [id])
+  amount      Decimal
+  pay_date    DateTime
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Job {
+  id           String        @id @default(uuid())
+  title        String
+  description  String
+  requirements String
+  applications Application[]
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+}
+
+model Application {
+  id          String   @id @default(uuid())
+  job_id      String
+  employee_id String
+  job         Job      @relation(fields: [job_id], references: [id])
+  employee    Employee @relation(fields: [employee_id], references: [id])
+  status      Status   @default(PENDING)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 }
