@@ -14,13 +14,13 @@ export class EmployeesService {
     });
   }
 
-  findAll(role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
-    if (role)
-      return this.databaseService.employee.findMany({
-        where: {
-          role,
-        },
-      });
+  findAll() {
+    // if (role)
+    //   return this.databaseService.user.findMany({
+    //     where: {
+    //       role,
+    //     },
+    //   });
 
     return this.databaseService.employee.findMany();
   }

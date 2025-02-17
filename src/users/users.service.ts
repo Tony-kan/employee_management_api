@@ -1,14 +1,18 @@
 import {
-  ConflictException,
+  // ConflictException,
   Injectable,
-  NotFoundException,
+  // NotFoundException,
 } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { CreateUserDto } from './dto/create-user.dto';
-import { updatedUserDto } from './dto/update-user.dto';
+import { Prisma } from '@prisma/client';
+// import { randomUUID } from 'crypto';
+import { DatabaseService } from 'src/database/database.service';
+// import { CreateUserDto } from './dto/create-user.dto';
+// import { updatedUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
+  constructor(private readonly databaseService: DatabaseService) {}
+
   private users = [
     {
       id: '550e8400-e29b-41d4-a716-446655440000',
@@ -42,65 +46,98 @@ export class UsersService {
     },
   ];
 
-  findAllUsers(role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
+  findAllUsers(
+    role?: 'INTERN' | 'ENGINEER' | 'ADMIN' | 'MANAGER' | 'EMPLOYEE',
+  ) {
+    // if (role) {
+    //   const roleArray = this.users.filter((user) => user.role === role);
+    //   if (roleArray.length === 0)
+    //     throw new NotFoundException(`User with role ${role} not found`);
+    //   return roleArray;
+    // }
+    // return this.users;
     if (role) {
-      const roleArray = this.users.filter((user) => user.role === role);
-      if (roleArray.length === 0)
-        throw new NotFoundException(`User with role ${role} not found`);
-      return roleArray;
+      return this.databaseService.user.findMany({
+        where: {
+          role,
+        },
+      });
     }
-    return this.users;
+
+    return this.databaseService.user.findMany();
   }
 
   findOneUser(id: string) {
-    const user = this.users.find((user) => user.id === id);
+    // const user = this.users.find((user) => user.id === id);
 
-    if (!user) throw new NotFoundException(`User with id ${id} not found`);
+    // if (!user) throw new NotFoundException(`User with id ${id} not found`);
 
-    return user;
+    return this.databaseService.user.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
   findOneUserByEmail(email: string) {
-    const user = this.users.find((user) => user.email === email);
+    // const user = this.users.find((user) => user.email === email);
 
-    if (!user)
-      throw new NotFoundException(`User with email ${email} not found`);
+    // if (!user)
+    //   throw new NotFoundException(`User with email ${email} not found`);
 
-    return user;
-  }
-
-  createUser(userData: CreateUserDto) {
-    const existingUser = this.users.find(
-      (user) => user.email === userData.email,
-    );
-
-    if (existingUser)
-      throw new ConflictException(
-        `User with email ${userData.email} already exists`,
-      );
-
-    const newUser = {
-      id: randomUUID(),
-      ...userData,
-    };
-    this.users.push(newUser);
-    return newUser;
-  }
-
-  updateUser(id: string, updatedUser: updatedUserDto) {
-    this.users = this.users.map((user) => {
-      if (user.id === id) {
-        return { ...user, ...updatedUser };
-      }
-      return user;
+    return this.databaseService.user.findUnique({
+      where: {
+        email,
+      },
     });
-    return this.findOneUser(id);
+  }
+
+  createUser(userData: Prisma.UserCreateInput) {
+    // const existingUser = this.users.find(
+    //   (user) => user.email === userData.email,
+    // );
+
+    // if (existingUser)
+    //   throw new ConflictException(
+    //     `User with email ${userData.email} already exists`,
+    //   );
+
+    // const newUser = {
+    //   id: randomUUID(),
+    //   ...userData,
+    // };
+    // this.users.push(newUser);
+
+    return this.databaseService.user.create({
+      data: userData,
+    });
+  }
+
+  updateUser(id: string, updatedUser: Prisma.UserUpdateInput) {
+    // this.users = this.users.map((user) => {
+    //   if (user.id === id) {
+    //     return { ...user, ...updatedUser };
+    //   }
+    //   return user;
+    // });
+
+    return this.databaseService.user.update({
+      where: {
+        id,
+      },
+      data: updatedUser,
+    });
   }
 
   deleteUser(id: string) {
-    const removedUser = this.findOneUser(id);
-    this.users = this.users.filter((user) => user.id !== id);
+    // const removedUser = this.findOneUser(id);
+    // this.users = this.users.filter((user) => user.id !== id);
 
-    return removedUser;
+    // return removedUser;
+    return this.databaseService.user.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
