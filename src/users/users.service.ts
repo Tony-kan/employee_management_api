@@ -67,7 +67,7 @@ export class UsersService {
     return this.databaseService.user.findMany();
   }
 
-  findOneUser(id: string) {
+  async findOneUser(id: string) {
     // const user = this.users.find((user) => user.id === id);
 
     // if (!user) throw new NotFoundException(`User with id ${id} not found`);
