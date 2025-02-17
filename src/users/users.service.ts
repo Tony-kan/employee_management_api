@@ -1,7 +1,7 @@
 import {
-  // ConflictException,
+  ConflictException,
   Injectable,
-  // NotFoundException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 // import { randomUUID } from 'crypto';
@@ -79,11 +79,17 @@ export class UsersService {
     });
   }
 
-  findOneUserByEmail(email: string) {
+  async findOneUserByEmail(email: string) {
     // const user = this.users.find((user) => user.email === email);
 
-    // if (!user)
-    //   throw new NotFoundException(`User with email ${email} not found`);
+    const user = await this.databaseService.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user)
+      throw new NotFoundException(`User with email ${email} not found`);
 
     return this.databaseService.user.findUnique({
       where: {
@@ -92,7 +98,7 @@ export class UsersService {
     });
   }
 
-  createUser(userData: Prisma.UserCreateInput) {
+  async createUser(userData: Prisma.UserCreateInput) {
     // const existingUser = this.users.find(
     //   (user) => user.email === userData.email,
     // );
@@ -107,6 +113,17 @@ export class UsersService {
     //   ...userData,
     // };
     // this.users.push(newUser);
+
+    const existingUser = await this.databaseService.user.findUnique({
+      where: {
+        email: userData.email,
+      },
+    });
+
+    if (existingUser)
+      throw new ConflictException(
+        `User with email ${userData.email} already exists`,
+      );
 
     return this.databaseService.user.create({
       data: userData,
