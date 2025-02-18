@@ -8,6 +8,8 @@ import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 // import { CreateUserDto } from './dto/create-user.dto';
 // import { updatedUserDto } from './dto/update-user.dto';
+// import * as bcrypt from 'bcrypt';
+import { hashingPassword2 } from 'util';
 
 @Injectable()
 export class UsersService {
@@ -114,6 +116,14 @@ export class UsersService {
     // };
     // this.users.push(newUser);
 
+    // const saltRounds = 10;
+    // const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+    // const saltOrRounds = 10;
+    // const password = 'random_password';
+    // const hash = await bcrypt.hash(userData.password, saltOrRounds);
+    const hash: string = await hashingPassword2(userData.password);
+    // const hashed: string = hash.toString();
+
     const existingUser = await this.databaseService.user.findUnique({
       where: {
         email: userData.email,
@@ -126,7 +136,10 @@ export class UsersService {
       );
 
     return this.databaseService.user.create({
-      data: userData,
+      data: {
+        ...userData,
+        password: hash,
+      },
     });
   }
 
