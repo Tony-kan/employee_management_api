@@ -8,6 +8,7 @@ import { ApplicationsModule } from './applications/applications.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { MyLoggerModule } from './my-logger/my-logger.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { APP_GUARD } from '@nestjs/core';
         limit: 1000,
       },
     ]),
+    MyLoggerModule,
   ],
 
   controllers: [AppController],
