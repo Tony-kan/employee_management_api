@@ -9,6 +9,7 @@ import { DepartmentsModule } from './departments/departments.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { MyLoggerModule } from './my-logger/my-logger.module';
+import { SalariesModule } from './salaries/salaries.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { MyLoggerModule } from './my-logger/my-logger.module';
       },
     ]),
     MyLoggerModule,
+    SalariesModule,
   ],
 
   controllers: [AppController],
