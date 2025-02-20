@@ -121,7 +121,7 @@ export class UsersService {
     // const saltOrRounds = 10;
     // const password = 'random_password';
     // const hash = await bcrypt.hash(userData.password, saltOrRounds);
-    const hash: string = await hashingPassword2(userData.password);
+    // const hash: string = await hashingPassword2(userData.password);
     // const hashed: string = hash.toString();
 
     const existingUser = await this.databaseService.user.findUnique({
@@ -138,7 +138,7 @@ export class UsersService {
     return this.databaseService.user.create({
       data: {
         ...userData,
-        password: hash,
+        // password: hash,
       },
     });
   }

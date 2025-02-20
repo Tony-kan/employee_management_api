@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { MyLoggerModule } from './my-logger/my-logger.module';
 import { SalariesModule } from './salaries/salaries.module';
 import { JobsModule } from './jobs/jobs.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { JobsModule } from './jobs/jobs.module';
     MyLoggerModule,
     SalariesModule,
     JobsModule,
+    AuthModule,
   ],
 
   controllers: [AppController],
