@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Ip,
 } from '@nestjs/common';
 import { EmployeesService } from './employees.service';
 import { Prisma } from '@prisma/client';
