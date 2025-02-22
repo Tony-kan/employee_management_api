@@ -1,26 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSalaryDto } from './dto/create-salary.dto';
-import { UpdateSalaryDto } from './dto/update-salary.dto';
+import { Prisma } from '@prisma/client';
+// import { CreateSalaryDto } from './dto/create-salary.dto';
+// import { UpdateSalaryDto } from './dto/update-salary.dto';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class SalariesService {
-  create(createSalaryDto: CreateSalaryDto) {
-    return 'This action adds a new salary';
+  constructor(private readonly databaseService: DatabaseService) {}
+
+  create(createSalaryDto: Prisma.SalaryCreateInput) {
+    return this.databaseService.salary.create({
+      data: createSalaryDto,
+    });
   }
 
   findAll() {
-    return `This action returns all salaries`;
+    return this.databaseService.salary.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} salary`;
+  findOne(id: string) {
+    return this.databaseService.salary.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
-  update(id: number, updateSalaryDto: UpdateSalaryDto) {
-    return `This action updates a #${id} salary`;
+  update(id: string, updateSalaryDto: Prisma.SalaryUpdateInput) {
+    return this.databaseService.salary.update({
+      where: {
+        id,
+      },
+      data: updateSalaryDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} salary`;
+  remove(id: string) {
+    return this.databaseService.salary.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
